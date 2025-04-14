@@ -5,7 +5,7 @@ import { Sidebar } from "@/components/sidebar"
 import { QuranReader } from "@/components/quran-reader"
 import { useTheme } from "@/components/theme-provider"
 import { useUrlState } from "@/hooks/use-url-state"
-import type { Edition, Page } from "@/types"
+import type { Edition, Page, Tafsir } from "@/types"
 import { useSurah } from "@/hooks/use-surah"
 import { useReciter } from "@/hooks/use-reciter"
 import { useTafsir } from "@/hooks/use-tafsir"
@@ -14,7 +14,6 @@ import { useMobile } from "@/hooks/use-mobile"
 export function QuranApp() {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false)
   const [selectedPage, setSelectedPage] = useUrlState<number>("page", 1)
-  const [searchQuery, setSearchQuery] = useState<string>("")
   const { theme } = useTheme()
   const { surahs } = useSurah()
   const { reciters, selectedReciter, setSelectedReciter } = useReciter()
@@ -25,11 +24,18 @@ export function QuranApp() {
   const [selectedEdition, setSelectedEdition] = useUrlState<string>("edition", "quran-uthmani")
   const [selectedTranslation, setSelectedTranslation] = useUrlState<string>("translation", "en.asad")
   const [viewMode, setViewMode] = useUrlState<"surah" | "page">("view", "surah")
-  const [searchResults, setSearchResults] = useState<{ ayah: string; surah: string; number: number }[]>([])
  
   const isMobile = useMobile()
 
- 
+  const transformedTafsirs = (tafsirs as Partial<Tafsir>[]).map((tafsir) => ({
+    ...tafsir,
+    text: tafsir.text || "",
+    verseId: tafsir.verseId ?? 0, // Ensure verseId is always a number
+    surahNumber: tafsir.surahNumber ?? 0, // Ensure surahNumber is always a number
+    identifier: tafsir.identifier || "", // Ensure identifier is always a string
+    name: tafsir.name || "", // Ensure name is always a string
+  }));
+
   useEffect(() => {
     const dummyPages = Array.from({ length: 604 }, (_, i) => ({
       number: i + 1,
@@ -62,7 +68,6 @@ export function QuranApp() {
   const handleSearch = useCallback(
     async (query: string) => {
       if (!query.trim()) {
-        setSearchResults([])
         return
       }
 
@@ -70,14 +75,11 @@ export function QuranApp() {
         const response = await fetch(`https://api.alquran.cloud/v1/search/${query}/all/${selectedTranslation}`)
         const data = await response.json()
 
-        if (data.code === 200) {
-          setSearchResults(data.data.matches)
-        } else {
-          setSearchResults([])
+        if (data.code !== 200) {
+          console.error("Error searching:", data)
         }
       } catch (error) {
         console.error("Error searching:", error)
-        setSearchResults([])
       }
     },
     [selectedTranslation],
@@ -103,7 +105,7 @@ export function QuranApp() {
           reciters={reciters}
           selectedReciter={selectedReciter}
           setSelectedReciter={setSelectedReciter}
-          tafsirs={tafsirs}
+          tafsirs={transformedTafsirs} // Pass the transformed tafsirs
           selectedTafsir={selectedTafsir}
           setSelectedTafsir={setSelectedTafsir}
           isOpen={sidebarOpen}
@@ -111,11 +113,9 @@ export function QuranApp() {
           isMobile={isMobile}
           viewMode={viewMode}
           setViewMode={setViewMode}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          handleSearch={handleSearch}
-          searchResults={searchResults}
-        />
+          searchQuery={""}
+         handleSearch={handleSearch}
+          />
         <main className="flex-1 overflow-auto">
           <QuranReader
             selectedSurah={selectedSurah}
@@ -128,7 +128,7 @@ export function QuranApp() {
             toggleSidebar={toggleSidebar}
             isMobile={isMobile}
             viewMode={viewMode}
-            searchResults={searchResults}
+          
             setSelectedPage={setSelectedPage}
           />
         </main>

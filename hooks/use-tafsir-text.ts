@@ -31,7 +31,8 @@ export function useTafsirText(ayahNumber: number, tafsirId: string) {
          
 
        
-          setTafsirText(response.text || "التفسير غير متوفر لهذه الآية")
+          const text = await response.text()
+          setTafsirText(text || "التفسير غير متوفر لهذه الآية")
           return
         }
 

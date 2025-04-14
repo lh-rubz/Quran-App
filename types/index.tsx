@@ -52,6 +52,8 @@ export interface Tafsir {
   verseId: number
   text: string
   surahNumber?: number
+  identifier: string;
+  name: string;
 }
 
 export interface AyahTiming {

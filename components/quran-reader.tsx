@@ -36,7 +36,7 @@ export function QuranReader({
   viewMode,
   setSelectedPage,
 }: QuranReaderProps) {
-  const [surahData, setSurahData] = useState<{ ayahs: Verse[]; numberOfAyahs: number } | null>(null)
+  const [surahData, setSurahData] = useState<{ ayahs: Verse[]; numberOfAyahs: number; number: number } | null>(null)
   const [pageData, setPageData] = useState<{ ayahs: Verse[] } | null>(null)
   const [translationData, setTranslationData] = useState<{ ayahs: Verse[] } | null>(null)
   const [activeVerse, setActiveVerse] = useState<string | null>(null)
@@ -128,13 +128,13 @@ export function QuranReader({
 
     if (viewMode === "surah" && surahData) {
       const ayah = surahData.ayahs.find((a: { numberInSurah: number }) => a.numberInSurah === verseNumber)
-      globalAyahNumber = ayah?.number || 0
+      globalAyahNumber = ayah?.numberInSurah || 0
     } else if (viewMode === "page" && pageData) {
       const ayah = pageData.ayahs.find(
         (a: { surah: { number: number }; numberInSurah: number }) =>
           a.surah.number === surahNumber && a.numberInSurah === verseNumber,
       )
-      globalAyahNumber = ayah?.number || 0
+      globalAyahNumber = ayah?.numberInSurah || 0
     }
 
     if (globalAyahNumber > 0) {
@@ -301,7 +301,7 @@ export function QuranReader({
         translation={translation}
         tafsirText={tafsirText}
         tafsirLoading={tafsirLoading}
-        tafsirError={tafsirError}
+        tafsirError={!!tafsirError}
         activeTab={activeTab}
         currentSurah={currentSurah}
         currentAyah={currentAyah}
@@ -348,7 +348,7 @@ export function QuranReader({
             isMobile={isMobile}
             viewMode={viewMode}
             selectedPage={selectedPage}
-            surahData={null}
+            surahData={{}}
             toggleSidebar={toggleSidebar}
             handlePreviousNavigation={handlePreviousNavigation}
             handleNextNavigation={handleNextNavigation}
