@@ -2,6 +2,7 @@
 
 Welcome to the **Quran App**! This application is designed to provide users with an interactive and user-friendly way to read, listen to, and understand the Quran. Whether you're looking to recite, explore translations, or dive into tafsir, this app has you covered.
 
+Live Demo:https://quran-app-kohl-eight.vercel.app/
 ---
 ## 📖 About the App
 
