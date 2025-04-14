@@ -27,11 +27,9 @@ export function useSurah() {
           }
 
           // Add a page property to each surah
-          const surahsWithPage = data.data.map((surah: any) => ({
+            const surahsWithPage = data.data.map((surah: Surah) => ({
             ...surah,
-            // In a real app, you would use actual page mapping data
-            // For this demo, we'll use a simple formula
-            page: Math.ceil(surah.number / 2),
+              page: Math.ceil(surah.number / 2),
           }))
 
           setSurahs(surahsWithPage)

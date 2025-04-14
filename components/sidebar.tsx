@@ -29,9 +29,8 @@ interface SidebarProps {
   viewMode: "surah" | "page"
   setViewMode: (mode: "surah" | "page") => void
   searchQuery: string
-  setSearchQuery: (query: string) => void
   handleSearch: (query: string) => void
-  searchResults: any[]
+
 }
 
 export function Sidebar({
@@ -58,9 +57,8 @@ export function Sidebar({
   viewMode,
   setViewMode,
   searchQuery,
-  setSearchQuery,
   handleSearch,
-  searchResults,
+ 
 
 
 }: SidebarProps) {

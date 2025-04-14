@@ -1,5 +1,6 @@
 "use client"
 
+import { Surah } from "@/types"
 import { ChevronLeft, ChevronRight, Menu } from "lucide-react"
 
 interface HeaderSectionProps {
@@ -7,7 +8,7 @@ interface HeaderSectionProps {
   isMobile: boolean
   viewMode: "surah" | "page"
   selectedPage: number
-  surahData: any
+  surahData: Partial<Surah>
   toggleSidebar: () => void
   handlePreviousNavigation: () => void
   handleNextNavigation: () => void

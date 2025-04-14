@@ -27,8 +27,14 @@ export function useReciter() {
         const data = await response.json()
 
         if (data.code === 200 && data.status === "OK") {
-          // Transform the data to match our Reciter type
-          const transformedReciters = data.data.map((reciter: any) => ({
+          const transformedReciters = data.data.map((reciter: {
+            identifier: string
+            language: string
+            name: string
+            englishName: string
+            format: string
+            type: string
+          }) => ({
             identifier: reciter.identifier,
             language: reciter.language,
             name: reciter.name,

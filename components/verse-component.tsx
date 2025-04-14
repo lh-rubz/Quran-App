@@ -1,12 +1,13 @@
 "use client"
 
-import { BookOpen } from "lucide-react"
 import { Play, Pause } from "lucide-react"
-import { useTheme } from "@/components/theme-provider"
 import { TafsirPanel } from "./tafsir-panel"
 
 interface VerseComponentProps {
-  verse: any
+verse: {
+    numberInSurah: number
+    text: string
+}
   surahNumber: number
   theme: string
   isCurrentVerse: boolean

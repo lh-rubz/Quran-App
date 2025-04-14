@@ -24,16 +24,13 @@ export function QuranApp() {
   const [editions, setEditions] = useState<Edition[]>([])
   const [selectedEdition, setSelectedEdition] = useUrlState<string>("edition", "quran-uthmani")
   const [selectedTranslation, setSelectedTranslation] = useUrlState<string>("translation", "en.asad")
-  const [loading, setLoading] = useState<boolean>(true)
-
   const [viewMode, setViewMode] = useUrlState<"surah" | "page">("view", "surah")
-  const [searchResults, setSearchResults] = useState<any[]>([])
+  const [searchResults, setSearchResults] = useState<{ ayah: string; surah: string; number: number }[]>([])
  
   const isMobile = useMobile()
 
-  // Initialize pages
+ 
   useEffect(() => {
-    // Create dummy pages for the UI
     const dummyPages = Array.from({ length: 604 }, (_, i) => ({
       number: i + 1,
       name: `Page ${i + 1}`,
@@ -52,8 +49,6 @@ export function QuranApp() {
         }
       } catch (error) {
         console.error("Error fetching editions:", error)
-      } finally {
-        setLoading(false)
       }
     }
 

@@ -4,7 +4,14 @@ import { useState, useEffect, useRef } from "react"
 import { useLocalStorage } from "./use-local-storage"
 
 export function useTafsir() {
-  const [tafsirs, setTafsirs] = useState<any[]>([])
+  interface Tafsir {
+    identifier: string
+    language: string
+    name: string
+    englishName: string
+  }
+
+  const [tafsirs, setTafsirs] = useState<Tafsir[]>([])
   const [selectedTafsir, setSelectedTafsir] = useLocalStorage<string>("selectedTafsir", "ar.muyassar")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -58,7 +65,7 @@ export function useTafsir() {
     }
 
     fetchTafsirs()
-  }, [selectedTafsir, setSelectedTafsir]) // We'll keep these dependencies but prevent re-fetching
+  }, [selectedTafsir, setSelectedTafsir])
 
   return { tafsirs, selectedTafsir, setSelectedTafsir, loading, error }
 }

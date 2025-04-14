@@ -19,8 +19,8 @@ interface QuranReaderProps {
   toggleSidebar: () => void
   isMobile: boolean
   viewMode: "surah" | "page"
-  searchResults: any[]
   setSelectedPage: (page: number) => void
+  searchResults?: { [key: string]: { surah: number; ayah: number; text: string } }[];
 }
 
 export function QuranReader({
@@ -34,15 +34,13 @@ export function QuranReader({
   toggleSidebar,
   isMobile,
   viewMode,
-  searchResults,
   setSelectedPage,
 }: QuranReaderProps) {
-  const [surahData, setSurahData] = useState<any>(null)
-  const [pageData, setPageData] = useState<any>(null)
-  const [translationData, setTranslationData] = useState<any>(null)
+  const [surahData, setSurahData] = useState<{ ayahs: Verse[]; numberOfAyahs: number } | null>(null)
+  const [pageData, setPageData] = useState<{ ayahs: Verse[] } | null>(null)
+  const [translationData, setTranslationData] = useState<{ ayahs: Verse[] } | null>(null)
   const [activeVerse, setActiveVerse] = useState<string | null>(null)
   const [activeVerseNumber, setActiveVerseNumber] = useState<number | null>(null)
-  const [activeVerseAyahNumber, setActiveVerseAyahNumber] = useState<number | null>(null)
   const [activeTab, setActiveTab] = useState<string>("tafsir")
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
   const [currentAyah, setCurrentAyah] = useState<number | null>(null)
@@ -102,7 +100,6 @@ export function QuranReader({
 
     setActiveVerse(null)
     setActiveVerseNumber(null)
-    setActiveVerseAyahNumber(null)
     setCurrentAyah(null)
     setCurrentSurah(null)
     setIsPlaying(false)
@@ -121,7 +118,6 @@ export function QuranReader({
     if (activeVerse === verseKey) {
       setActiveVerse(null)
       setActiveVerseNumber(null)
-      setActiveVerseAyahNumber(null)
       return
     }
 
@@ -131,18 +127,18 @@ export function QuranReader({
     let globalAyahNumber = 0
 
     if (viewMode === "surah" && surahData) {
-      const ayah = surahData.ayahs.find((a: any) => a.numberInSurah === verseNumber)
+      const ayah = surahData.ayahs.find((a: { numberInSurah: number }) => a.numberInSurah === verseNumber)
       globalAyahNumber = ayah?.number || 0
     } else if (viewMode === "page" && pageData) {
       const ayah = pageData.ayahs.find(
-        (a: any) => a.surah.number === surahNumber && a.numberInSurah === verseNumber,
+        (a: { surah: { number: number }; numberInSurah: number }) =>
+          a.surah.number === surahNumber && a.numberInSurah === verseNumber,
       )
       globalAyahNumber = ayah?.number || 0
     }
 
     if (globalAyahNumber > 0) {
       setActiveVerseNumber(globalAyahNumber)
-      setActiveVerseAyahNumber(verseNumber)
     }
   }
 
@@ -196,7 +192,8 @@ export function QuranReader({
       }
     } else if (viewMode === "page" && pageData) {
       const currentAyahIndex = pageData.ayahs.findIndex(
-        (a: any) => a.surah.number === surahNumber && a.numberInSurah === ayahNumber,
+        (a: { surah: { number: number }; numberInSurah: number }) =>
+          a.surah.number === surahNumber && a.numberInSurah === ayahNumber,
       )
 
       if (currentAyahIndex < pageData.ayahs.length - 1) {
@@ -244,9 +241,8 @@ export function QuranReader({
     }
   }
 
-  const renderVerses = (verses: any[]) => {
-    if (viewMode === "page") {
-      const versesGroupedBySurah: { [key: number]: any[] } = {}
+  const renderVerses = (verses: Verse[]) => {if (viewMode === "page") {
+      const versesGroupedBySurah: { [key: number]: Verse[] } = {}
 
       verses.forEach((verse) => {
         const surahNumber = verse.surah.number
@@ -272,7 +268,13 @@ export function QuranReader({
     return verses.map((verse) => renderVerse(verse, viewMode === "surah" ? selectedSurah : verse.surah.number))
   }
 
-  const renderVerse = (verse: any, surahNumber: number) => {
+  interface Verse {
+    numberInSurah: number;
+    surah: { number: number; name: string; englishName: string };
+    text: string;
+  }
+
+  const renderVerse = (verse: Verse, surahNumber: number) => {
     const verseNumber = verse.numberInSurah
     const verseKey = `${surahNumber}:${verseNumber}`
     const isCurrentVerse = currentSurah === surahNumber && currentAyah === verseNumber
@@ -283,7 +285,7 @@ export function QuranReader({
       translation = translationData.ayahs[verseNumber - 1]?.text || ""
     } else if (viewMode === "page" && translationData && translationData.ayahs) {
       const translationVerse = translationData.ayahs.find(
-        (a: any) => a.surah.number === surahNumber && a.numberInSurah === verseNumber,
+        (a: Verse) => a.surah.number === surahNumber && a.numberInSurah === verseNumber,
       )
       translation = translationVerse?.text || ""
     }

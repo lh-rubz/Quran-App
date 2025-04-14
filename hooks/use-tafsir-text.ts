@@ -25,7 +25,6 @@ export function useTafsirText(ayahNumber: number, tafsirId: string) {
 
       try {
         setLoading(true)
-        // First try the alquran.cloud API
         const response = await fetch(`https://api.alquran.cloud/v1/ayah/${ayahNumber}/${tafsirId}`)
 
         if (!response.ok) {
@@ -49,7 +48,6 @@ export function useTafsirText(ayahNumber: number, tafsirId: string) {
         setTafsirText("التفسير غير متوفر لهذه الآية")
       } finally {
         setLoading(false)
-        // Update refs to current values
         previousAyah.current = ayahNumber
         previousTafsir.current = tafsirId
       }
