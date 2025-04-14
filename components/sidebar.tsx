@@ -349,7 +349,7 @@ export function Sidebar({
                 } focus:outline-none focus:ring-2 focus:ring-green-500`}
               >
                 {editions
-                  .filter((edition) => edition.format === "text" && edition.language === "ar")
+                  .filter((edition) => edition.format === "text" && edition.language === "ar" && edition.type==="quran")
                   .map((edition) => (
                     <option key={edition.identifier} value={edition.identifier}>
                       {edition.name}
